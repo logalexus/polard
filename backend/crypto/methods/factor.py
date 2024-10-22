@@ -22,17 +22,14 @@ def pollard_rho(n, g=lambda x, n: (x**2 + 1) % n):
 
 
 def yafu_factor_driver(n):
-    YAFU_BIN = "D:\\YandexDisk\\CodeCamp2022\\tools\\yafu-master\\yafu-x64.exe"
-    # YAFU_BIN = "backend/crypto/bin/yafu/yafu-x64.exe"
+    YAFU_BIN = "backend/crypto/bin/yafu"
     tmp = []
     proc = subprocess.Popen(
         [
             YAFU_BIN,
             f"factor({str(n)})",
-            "-session",
-            str(n),
-            "-qssave",
-            f"/tmp/qs_{str(n)}.dat",
+            f"-threads",
+            f"10",
         ],
         stdout=subprocess.PIPE,
     )
@@ -40,4 +37,4 @@ def yafu_factor_driver(n):
         line = line.rstrip().decode("utf8")
         if re.search(r"P\d+ = \d+", line):
             tmp += [int(line.split("=")[1])]
-    return tmp
+    return tmp.pop()
