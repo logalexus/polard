@@ -1,6 +1,5 @@
 from backend.crypto.parsers.rsa_parser import RSAParser
 from backend.crypto.parsers.ecdsa_parser import ECDSAParser
-from fastapi import FastAPI
 
 def main():
     with open("backend/crypto/examples/id_rsa.pub", "rb") as file:

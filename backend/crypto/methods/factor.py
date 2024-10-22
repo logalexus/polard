@@ -1,3 +1,4 @@
+import asyncio
 import re
 import subprocess
 
@@ -13,6 +14,7 @@ def pollard_rho(n, g=lambda x, n: (x**2 + 1) % n):
         x = g(x, n)
         y = g(g(y, n), n)
         d = GCD(abs(x-y), n)
+        # await asyncio.sleep(0) 
     if d == n:
         return None
     else:
@@ -20,7 +22,8 @@ def pollard_rho(n, g=lambda x, n: (x**2 + 1) % n):
 
 
 def yafu_factor_driver(n):
-    YAFU_BIN = "D:\\YandexDisk\\CodeCamp2022\\tools\yafu-master\\yafu-x64.exe"
+    YAFU_BIN = "D:\\YandexDisk\\CodeCamp2022\\tools\\yafu-master\\yafu-x64.exe"
+    # YAFU_BIN = "backend/crypto/bin/yafu/yafu-x64.exe"
     tmp = []
     proc = subprocess.Popen(
         [

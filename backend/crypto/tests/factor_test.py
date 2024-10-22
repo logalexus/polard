@@ -12,7 +12,7 @@ for i in range(10, 129):
     print(f"Bits = {i}")
     print(f"N = {n}")
 
-    factor = pollard_rho(n)
+    factor = yafu_factor_driver(n)
     p = factor
     q = n // p
 
