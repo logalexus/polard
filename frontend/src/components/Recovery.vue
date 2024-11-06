@@ -1,95 +1,92 @@
 <template>
-  <v-card flat>
-    <v-card-title class="d-flex align-center pe-2">
-      Labs
-      <v-spacer></v-spacer>
-    </v-card-title>
-    <v-divider></v-divider>
-    <v-card-title class="d-flex align-start">
-      <v-spacer></v-spacer>
+  <v-container fluid class="d-flex flex-row pa-2" style="min-height: 100vh; gap: 8px;">
+    <v-card class="flex-1-1-100 pa-4" style="height: 100vh;">
       <v-textarea label="Public Key" variant="solo-filled" rows="20"></v-textarea>
-      <v-spacer></v-spacer>
-    </v-card-title>
-    <v-card-title class="d-flex align-center justify-center ">
-      <v-btn> Factorize </v-btn>
-    </v-card-title>
-  </v-card>
+
+      <v-text-field type="number" label="Timeout, sec" outlined class="mt-4" :min="1" :max="60" v-model="timeout"
+        style="width: 200px;"></v-text-field>
+
+      <v-text-field type="number" label="Bit Length" outlined class="mt-4" :min="10" :max="128" v-model="bitLength"
+        style="width: 200px;"></v-text-field>
+      <v-btn color="primary" class="mt-4" @click="factorizeKey"> Factorize </v-btn>
+    </v-card>
+    <v-card class="flex-1-1-100 pa-4" style="height: 100vh;">
+      <Line ref="chart" :data="chartData" :options="chartOptions" />
+    </v-card>
+  </v-container>
 </template>
 
 <script>
 import VMAction from "@/components/VMAction.vue"
+import { Line } from 'vue-chartjs';
+import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, CategoryScale, LinearScale, PointElement } from 'chart.js';
+
+ChartJS.register(Title, Tooltip, Legend, LineElement, CategoryScale, LinearScale, PointElement);
 
 export default {
   components: {
-    VMAction
+    VMAction,
+    Line,
   },
   data() {
     return {
-      search: '',
-      headers: [
-        { title: 'Name', value: 'name' },
-        { title: 'OS', align: 'center', value: 'os' },
-        { title: 'IP', align: 'center', value: 'ip' },
-        { title: 'Status', align: 'center', value: 'status' },
-        { title: "Actions", value: "action", align: 'center', sortable: false, width: "300px" }
-      ],
-      items: [],
-      loading: true,
-      itemsPerPage: 5,
-      totalItems: 0,
-    }
-  },
-  setup() {
-    return {
-    }
-  },
-  mounted() {
-    this.get_labs();
+      timeout: 30,
+      bitLength: 64,
+      timeout: 30,
+      bitLength: 64,
+      chartData: {
+        labels: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+        datasets: [
+          {
+            label: 'Factor time, sec',
+            data: [0.1, 0.3, 0.5, 1, 2, 3, 5, 8, 13, 21],
+            borderColor: '#42A5F5',
+            fill: false,
+          },
+        ],
+      },
+      chartOptions: {
+        responsive: true,
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Key length, bits',
+            },
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Factor time, sec',
+            },
+            min: 0,
+          },
+        },
+      },
+    };
   },
   methods: {
-    get_labs() {
-      this.loading = true
-      this.$http.get('labs').then(response => {
-        console.log(response.data);
-        this.items = response.data
-        this.loading = false
-      });
+    factorizeKey() {
+      console.log("Timeout:", this.timeout);
+      console.log("Bit Length:", this.bitLength);
+      this.startUpdatingGraph();
     },
-    escapeHtml(in_) {
-      return in_.replace(/(<span style="background-color: #(?:[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})">|<\/span>)|[&<>"'/]/g, ($0, $1) => {
-        const entityMap = {
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          '\'': '&#39;',
-          '/': '&#x2F;',
-        };
+    startUpdatingGraph() {
+      let count = 10; 
 
-        return $1 ? $1 : entityMap[$0];
-      });
-    },
-    stringdata(data) {
-      if (data == NaN) {
-        return "Nothing"
-      }
-      return this.escapeHtml(data)
-        .split('\n')
-        .join('<br>');
+      this.interval = setInterval(() => {
+        count += 10; 
+        let newChartData = JSON.parse(JSON.stringify(this.chartData));
+        newChartData.labels.push(count); 
+        newChartData.datasets[0].data.push(Math.random() * count); 
+        this.chartData = newChartData;
+        if (count >= 120) {
+          clearInterval(this.interval);
+        }
+      }, 1000); // Интервал в 1 секунду
     },
   },
 }
 </script>
 
-<style>
-.key-block {
-  display: flex;
-  align-items: center;
-  height: 100%;
-}
-
-.key-field {
-  display: flex;
-  width: 500px;
-}
-</style>
+<style></style>
