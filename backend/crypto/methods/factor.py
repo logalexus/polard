@@ -4,7 +4,6 @@ import subprocess
 
 from Crypto.Util.number import GCD
 
-
 def pollard_rho(n, g=lambda x, n: (x**2 + 1) % n):
     n_length = len(str(n)) + 1
     x = 2
@@ -14,7 +13,6 @@ def pollard_rho(n, g=lambda x, n: (x**2 + 1) % n):
         x = g(x, n)
         y = g(g(y, n), n)
         d = GCD(abs(x-y), n)
-        # await asyncio.sleep(0) 
     if d == n:
         return None
     else:

@@ -30,5 +30,6 @@ class RSAParser(PublicKeyParser):
             numbers = self.public_key.public_numbers()
             logger.info(f"Modulus (n): {numbers.n}")
             logger.info(f"Public exponent (e): {numbers.e}")
+            return numbers
         else:
             logger.warning("No key loaded.")

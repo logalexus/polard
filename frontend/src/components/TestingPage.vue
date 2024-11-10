@@ -1,17 +1,17 @@
 <template>
   <v-container fluid class="d-flex flex-row pa-2" style="min-height: 100vh; gap: 8px;">
     <v-card class="flex-1-1-100 pa-4" style="height: 100vh;">
-      <v-textarea label="Public Key" variant="solo-filled" rows="20"></v-textarea>
-
+      <v-card-title class="d-flex justify-center">Pollard Test</v-card-title>
       <v-text-field type="number" label="Timeout, sec" outlined class="mt-4" :min="1" :max="60" v-model="timeout"
         style="width: 200px;"></v-text-field>
-
       <v-text-field type="number" label="Bit Length" outlined class="mt-4" :min="10" :max="128" v-model="bitLength"
         style="width: 200px;"></v-text-field>
       <v-btn color="primary" class="mt-4" @click="factorizeKey"> Factorize </v-btn>
     </v-card>
     <v-card class="flex-1-1-100 pa-4" style="height: 100vh;">
+      <v-card-title class="d-flex justify-center">Results</v-card-title>
       <Line ref="chart" :data="chartData" :options="chartOptions" />
+      <v-data-table :items="items"></v-data-table>
     </v-card>
   </v-container>
 </template>
@@ -30,8 +30,6 @@ export default {
   },
   data() {
     return {
-      timeout: 30,
-      bitLength: 64,
       timeout: 30,
       bitLength: 64,
       chartData: {
@@ -63,6 +61,20 @@ export default {
           },
         },
       },
+      items: [
+        {
+          N: '1',
+          Bits: '10',
+          Time: '20',
+          Status: 'Factorized',
+        },
+        {
+          N: '2',
+          Bits: '11',
+          Time: '22',
+          Status: 'Factorized',
+        },
+      ],
     };
   },
   methods: {
@@ -72,13 +84,13 @@ export default {
       this.startUpdatingGraph();
     },
     startUpdatingGraph() {
-      let count = 10; 
+      let count = 10;
 
       this.interval = setInterval(() => {
-        count += 10; 
+        count += 10;
         let newChartData = JSON.parse(JSON.stringify(this.chartData));
-        newChartData.labels.push(count); 
-        newChartData.datasets[0].data.push(Math.random() * count); 
+        newChartData.labels.push(count);
+        newChartData.datasets[0].data.push(Math.random() * count);
         this.chartData = newChartData;
         if (count >= 120) {
           clearInterval(this.interval);
