@@ -1,7 +1,9 @@
 <template>
   <v-container fluid class="d-flex flex-row pa-2" style="min-height: 100vh; gap: 8px;">
     <v-card class="flex-1-1-100 pa-4" style="height: 100vh;">
-      <v-card-title class="d-flex justify-center">RSA Public key generator</v-card-title>
+      <v-card-title class="d-flex justify-center text-h5 font-weight-bold">
+        <span>RSA Public Key Generator</span>
+      </v-card-title>
       <div class="d-flex flex-column align-center" style="width: 100%;">
         <v-textarea class="mt-4" label="Public Key" variant="solo-filled" rows="20" readonly="true" v-model="publicKey"
           style="min-width: 50%;"></v-textarea>
@@ -19,12 +21,8 @@
 </template>
 
 <script>
-import VMAction from "@/components/VMAction.vue"
 
 export default {
-  components: {
-    VMAction,
-  },
   data() {
     return {
       bitLength: 64,

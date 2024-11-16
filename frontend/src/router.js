@@ -1,13 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import FactorizationPage from "@/components/FactorizationPage.vue"
 import GenerationPage from '@/components/GenerationPage.vue'
-import TestingPage from '@/components/TestingPage.vue'
+import AnalyzingPage from '@/components/AnalyzingPage.vue'
+import CheckKeyPage from '@/components/CheckKeyPage.vue'
 
 const routes = [
-  { path: '/', redirect: '/factorization' },
+  { path: '/', redirect: '/check' },
+  { path: '/check', component: CheckKeyPage },
   { path: '/factorization', component: FactorizationPage },
   { path: '/generation', component: GenerationPage },
-  { path: '/tests', component: TestingPage },
+  { path: '/analyze', component: AnalyzingPage },
 ]
 
 const router = createRouter({

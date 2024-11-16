@@ -13,12 +13,14 @@
       </v-app-bar>
       <v-navigation-drawer :rail="rail" permanent>
         <v-list density="compact" nav>
-          <v-list-item :prepend-icon="mdiKeyRemove" title="Factorization" value="key"
+          <v-list-item :prepend-icon="mdiCheckCircleOutline" title="Check" value="check"
+            @click="$router.push('/check')"></v-list-item>
+          <v-list-item :prepend-icon="mdiKeyRemove" title="Factorization" value="keyFactor"
             @click="$router.push('/factorization')"></v-list-item>
           <v-list-item :prepend-icon="mdiKeyPlus" title="Generation" value="generation"
             @click="$router.push('/generation')"></v-list-item>
           <v-list-item :prepend-icon="mdiTestTube" title="Tests" value="tests"
-            @click="$router.push('/tests')"></v-list-item>
+            @click="$router.push('/analyze')"></v-list-item>
         </v-list>
       </v-navigation-drawer>
       <v-main>
@@ -29,15 +31,9 @@
 </template>
 
 <script>
-import VMList from "@/components/VMList.vue"
-import FactorizationPage from "@/components/FactorizationPage.vue"
-import { mdiServerOutline, mdiTestTube, mdiWeatherSunny, mdiKeyRemove, mdiKeyPlus } from '@mdi/js'
+import { mdiServerOutline, mdiTestTube, mdiWeatherSunny, mdiKeyRemove, mdiKeyPlus, mdiCheckCircleOutline  } from '@mdi/js'
 
 export default {
-  components: {
-    VMList,
-    FactorizationPage,
-  },
   data() {
     return {
       drawer: true,
@@ -52,6 +48,7 @@ export default {
       mdiWeatherSunny,
       mdiKeyRemove,
       mdiKeyPlus,
+      mdiCheckCircleOutline,
     }
   }
 }

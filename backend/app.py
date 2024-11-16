@@ -1,4 +1,5 @@
 import asyncio
+import json
 
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.templating import Jinja2Templates
@@ -9,6 +10,7 @@ from pydantic import BaseModel
 from backend.crypto.factorizer import Factorizer
 from backend.crypto.generators.rsa_gen import generate_pub_key
 from backend.crypto.methods.factor import pollard_rho, yafu_factor_driver
+from backend.crypto.tests.tester import PublicKeyTester
 
 app = FastAPI()
 
@@ -41,45 +43,57 @@ class FactorizeModel(BaseModel):
     method: str
     timeout: int
 
-class FactorResult(BaseModel):
-    status: str
-    private_key: str
-    factor_time: str
-
 @app.post("/api/factorize")
 async def factorize(params: FactorizeModel):
     if params.timeout < 1 or params.timeout > 300:
         raise HTTPException(
             status_code=400, detail="Timeout size must be between 1 and 300 seconds")
         
-    factorizer = Factorizer(params.public_key.encode())
-    private_key, time = factorizer.factorize(params.method)
+    factorizer = Factorizer(params.method)
+    factorResult = await factorizer.factorize(params.public_key.encode(), params.timeout)
     
-    return FactorResult(status="Success", private_key=private_key, factor_time=time)
+    return factorResult
+
+class CheckKeyModel(BaseModel):
+    public_key: str
+    timeout: int
+
+@app.post("/api/check")
+async def factorize(params: CheckKeyModel):
+    if params.timeout < 1 or params.timeout > 30:
+        raise HTTPException(
+            status_code=400, detail="Timeout size must be between 1 and 30 seconds")
+        
+    tester = PublicKeyTester()
+    results = await tester.run_tests(params.public_key.encode(), params.timeout)
+    
+    return results
 
 
-@app.websocket("/api/ws")
-async def websocket_endpoint(websocket: WebSocket):
+class AnalyzeResult(BaseModel):
+    id: int
+    bits: int
+    time: str
+    status: str
+
+@app.websocket("/api/analyze")
+async def analyze(websocket: WebSocket, method: str, timeout: int):
     await websocket.accept()
     try:
-        for i in range(10, 129):
-            p = getPrime(i)
-            q = getPrime(i)
-            n = p * q
-            phi = (p - 1) * (q - 1)
-            e = 0x10001
-            d = pow(e, -1, phi)
-
-            result = f"Bits = {i}\nN = {n}\n"
-            await websocket.send_text(result)
-
-            factor = await asyncio.to_thread(yafu_factor_driver, n)
-            p = factor
-            q = n // p
-
-            factor_result = f"Factor: p = {p}, q = {q}\n"
-            await websocket.send_text(factor_result)
-
+        for i, bits in enumerate(range(22, 257)):
+            public_key = generate_pub_key(bits)
+            factorizer = Factorizer(method)
+            factorResult = await factorizer.factorize(public_key.encode(), timeout)
+            analyzeResult = AnalyzeResult(
+                id=i,
+                bits=bits,
+                time=factorResult.factor_time,
+                status=factorResult.status
+            )
+            await websocket.send_text(analyzeResult.model_dump_json())
+            if factorResult.status == "Timeout":
+                await websocket.close()
+                return
     except WebSocketDisconnect:
         print("Client disconnected")
 
