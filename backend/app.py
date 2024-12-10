@@ -1,7 +1,6 @@
-import asyncio
-import json
-
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi import Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -22,12 +21,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-templates = Jinja2Templates(directory="backend/templates")
+app.mount("/", StaticFiles(directory="backend/static", html=True))
 
 
-@app.get("/api/pollard_test")
-async def get(request: Request):
-    return templates.TemplateResponse("pollard_test.html", {"request": request})
+@app.middleware("http")
+async def redirect_to_root(request: Request, call_next):
+    response = await call_next(request)
+    if response.status_code == 404:
+        return RedirectResponse("/")
+    return response
 
 
 @app.get("/api/public_generate")
@@ -43,30 +45,33 @@ class FactorizeModel(BaseModel):
     method: str
     timeout: int
 
+
 @app.post("/api/factorize")
 async def factorize(params: FactorizeModel):
     if params.timeout < 1 or params.timeout > 300:
         raise HTTPException(
             status_code=400, detail="Timeout size must be between 1 and 300 seconds")
-        
+
     factorizer = Factorizer(params.method)
     factorResult = await factorizer.factorize(params.public_key.encode(), params.timeout)
-    
+
     return factorResult
+
 
 class CheckKeyModel(BaseModel):
     public_key: str
     timeout: int
+
 
 @app.post("/api/check")
 async def factorize(params: CheckKeyModel):
     if params.timeout < 1 or params.timeout > 30:
         raise HTTPException(
             status_code=400, detail="Timeout size must be between 1 and 30 seconds")
-        
+
     tester = PublicKeyTester()
     results = await tester.run_tests(params.public_key.encode(), params.timeout)
-    
+
     return results
 
 
@@ -75,6 +80,7 @@ class AnalyzeResult(BaseModel):
     bits: int
     time: str
     status: str
+
 
 @app.websocket("/api/analyze")
 async def analyze(websocket: WebSocket, method: str, timeout: int):
@@ -96,6 +102,7 @@ async def analyze(websocket: WebSocket, method: str, timeout: int):
                 return
     except WebSocketDisconnect:
         print("Client disconnected")
+
 
 if __name__ == "__main__":
     import uvicorn

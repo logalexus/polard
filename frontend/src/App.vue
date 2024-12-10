@@ -19,7 +19,7 @@
             @click="$router.push('/factorization')"></v-list-item>
           <v-list-item :prepend-icon="mdiKeyPlus" title="Generation" value="generation"
             @click="$router.push('/generation')"></v-list-item>
-          <v-list-item :prepend-icon="mdiTestTube" title="Tests" value="tests"
+          <v-list-item :prepend-icon="mdiTestTube" title="Analyze" value="tests"
             @click="$router.push('/analyze')"></v-list-item>
         </v-list>
       </v-navigation-drawer>
