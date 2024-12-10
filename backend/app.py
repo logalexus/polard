@@ -21,8 +21,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/", StaticFiles(directory="backend/static", html=True))
-
 
 @app.middleware("http")
 async def redirect_to_root(request: Request, call_next):
@@ -103,6 +101,7 @@ async def analyze(websocket: WebSocket, method: str, timeout: int):
     except WebSocketDisconnect:
         print("Client disconnected")
 
+app.mount("/", StaticFiles(directory="backend/static", html=True))
 
 if __name__ == "__main__":
     import uvicorn
