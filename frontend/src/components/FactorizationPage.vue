@@ -2,34 +2,34 @@
   <v-container fluid class="d-flex flex-row pa-2" style="min-height: 100vh; gap: 8px;">
     <v-card class="flex-1-1-100 pa-4" style="height: 100vh;">
       <v-card-title class="d-flex justify-center text-h5 font-weight-bold">
-        <span>RSA Public Key Factorization</span>
+        <span>Факторизация публичного ключа RSA</span>
       </v-card-title>
-      <v-textarea label="Public Key" variant="solo-filled" rows="20" v-model="publicKey" @dragover.prevent
+      <v-textarea label="Публичный ключ" variant="solo-filled" rows="20" v-model="publicKey" @dragover.prevent
         @dragenter.prevent @drop="handleDrop"></v-textarea>
       <v-container fluid class="d-flex pa-0" style="gap: 8px;">
-        <v-text-field type="number" label="Timeout, sec" outlined :min="1" :max="60" v-model="timeout"></v-text-field>
-        <v-select label="Method" v-model="selectedMethod" :items="factorMethods"></v-select>
+        <v-text-field type="number" label="Таймаут, сек" outlined :min="1" :max="60" v-model="timeout"></v-text-field>
+        <v-select label="Метод" v-model="selectedMethod" :items="factorMethods"></v-select>
       </v-container>
       <template v-if="loading">
-        <v-btn color="red" class="mt-4 mr-4" @click="generate_key">Cancel</v-btn>
+        <v-btn color="red" class="mt-4 mr-4" @click="generate_key">Отменить</v-btn>
         <v-progress-circular class="mt-4" indeterminate></v-progress-circular>
       </template>
       <template v-else>
-        <v-btn color="primary" class="mt-4" @click="factorizeKey"> Factorize </v-btn>
+        <v-btn color="primary" class="mt-4" @click="factorizeKey"> Факторизовать </v-btn>
       </template>
     </v-card>
     <v-card class="flex-1-1-100 pa-4" style="height: 100vh;">
       <v-card-title class="d-flex justify-center text-h5 font-weight-bold">
-        <span>Results</span>
+        <span>Результаты</span>
       </v-card-title>
-      <v-textarea label="Private Key" readonly="true" variant="solo-filled" rows="20" v-model="privateKey"></v-textarea>
+      <v-textarea label="Приватный ключ" readonly="true" variant="solo-filled" rows="20" v-model="privateKey"></v-textarea>
       <!-- <v-progress-linear class="rounded-sm" v-model="progress" color="green" height="25">
         <template v-slot:default="{ value }">
           <strong>{{ Math.ceil(value) }}%</strong>
         </template>
       </v-progress-linear> -->
-      <v-chip class="mr-2 mt-4">Factor time: {{ factorTime }}s</v-chip>
-      <v-chip class="mr-2 mt-4" :color="status === 'Success' ? 'green' : 'red'">Status: {{ status }}</v-chip>
+      <v-chip class="mr-2 mt-4">Время факторизации: {{ factorTime }}с</v-chip>
+      <v-chip class="mr-2 mt-4" :color="status === 'Success' ? 'green' : 'red'">Статус: {{ status === 'Success' ? 'Успех' : 'Провал' }}</v-chip>
     </v-card>
   </v-container>
 </template>

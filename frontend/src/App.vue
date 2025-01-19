@@ -4,7 +4,7 @@
       <v-app-bar :elevation="1">
         <template v-slot:prepend>
           <v-app-bar-nav-icon @click="rail = !rail"></v-app-bar-nav-icon>
-          <v-app-bar-title>Crypto Analyzer</v-app-bar-title>
+          <v-app-bar-title>Лаборатория RSA</v-app-bar-title>
           <v-icon :icon="mdiTestTube"></v-icon>
         </template>
         <template v-slot:append>
@@ -13,13 +13,13 @@
       </v-app-bar>
       <v-navigation-drawer :rail="rail" permanent>
         <v-list density="compact" nav>
-          <v-list-item :prepend-icon="mdiCheckCircleOutline" title="Check" value="check"
+          <v-list-item :prepend-icon="mdiCheckCircleOutline" title="Тестирование" value="check"
             @click="$router.push('/check')"></v-list-item>
-          <v-list-item :prepend-icon="mdiKeyRemove" title="Factorization" value="keyFactor"
+          <v-list-item :prepend-icon="mdiKeyRemove" title="Факторизация" value="keyFactor"
             @click="$router.push('/factorization')"></v-list-item>
-          <v-list-item :prepend-icon="mdiKeyPlus" title="Generation" value="generation"
+          <v-list-item :prepend-icon="mdiKeyPlus" title="Генерация" value="generation"
             @click="$router.push('/generation')"></v-list-item>
-          <v-list-item :prepend-icon="mdiTestTube" title="Analyze" value="tests"
+          <v-list-item :prepend-icon="mdiTestTube" title="Анализ" value="tests"
             @click="$router.push('/analyze')"></v-list-item>
         </v-list>
       </v-navigation-drawer>
